@@ -3,39 +3,32 @@ import os
 from tictactoe import Player, State, Status, available_moves, check, move, print_board
 
 
-def minimax(state: State, player: Player, alpha=-float("inf"), beta=float("inf")):
+# Functionally the same as minimax but some branching is reduced.
+def negamax(state: State, player: Player, alpha=-float("inf"), beta=float("inf")):
     global calls
     calls += 1
-    match player:
-        case 1:
-            best_score = [None, -float("inf")]
-        case 0:
-            best_score = [None, float("inf")]
+    best_score = [None, -float("inf")]
     status = check(state)
     if status != Status.IN_PROGRESS:
         match status:
             case Status.x:
-                return [None, 1]
+                return [None, 1 if player == 1 else -1]
             case Status.o:
-                return [None, -1]
+                return [None, 1 if player == 0 else -1]
             case Status.DRAW:
                 return [None, 0]
     preferred = [4, 0, 2, 6, 8, 1, 3, 5, 7]
-
+    moves = available_moves(state)
     for choice in preferred:
-        if choice in available_moves(state):
+        if choice in moves:
             next_state = move(state, choice, player)
-            _, score = minimax(next_state, int(not (player)), alpha, beta)  # type: ignore
-            if (player == 1) and (score > best_score[1]):
+            _, score = negamax(next_state, 1 - player, -beta, -alpha)  # type: ignore
+            score = -score
+            if score > best_score[1]:
                 best_score = [choice, score]
-                alpha = max(alpha, best_score[1])
-                if alpha >= beta:
-                    break
-            if (player == 0) and (score < best_score[1]):
-                best_score = [choice, score]
-                beta = min(beta, best_score[1])
-                if beta <= alpha:
-                    break
+            alpha = max(score, alpha)
+            if alpha >= beta:
+                break
     return best_score
 
 
@@ -77,7 +70,7 @@ if __name__ == "__main__":
             game = move(game, p1, 1)
             turn = not (turn)
         else:
-            p2 = minimax(game, 0)[0]
+            p2 = negamax(game, 0)[0]
             assert p2 in range(9)
             game = move(game, p2, 0)
             turn = not (turn)
