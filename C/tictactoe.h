@@ -14,13 +14,10 @@ typedef struct {
     //Status status;
 } State;
 
-void printBoard(State *state);
-
+void printBoard(const State *state);
 int makeMove(State *state, int player, int move);
-void undoMove(State *state, int player, int move);
-Status check(State *state);
-int available_moves(State *state);
-
+Status check(const State *state);
+int available_moves(const State *state);
 void clearScreen();
 
 #endif

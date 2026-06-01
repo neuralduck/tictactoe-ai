@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "tictactoe.h"
 
-void printBoard(State* state){
+void printBoard(const State* state){
     char board[9];
     for(int i = 0; i < 9; i++){
         if(state->playerX & (1<<i)){
@@ -35,11 +35,11 @@ int makeMove(State *state, int player, int move) {
     return 1;
 }
 
-int available_moves(State* state){
+int available_moves(const State* state){
     return (~(state->playerX | state->playerO)) & 0b111111111;
 }
 
-Status check(State* state){
+Status check(const State* state){
     static const int horizontal = 0b111000000;
     static const int vertical   = 0b100100100;
     static const int diag1      = 0b100010001;
