@@ -1,5 +1,19 @@
-run: game
-	./game
+CC      = clang
+CFLAGS  = -Wall -Wextra -O2 -I/usr/local/include
+LDFLAGS = -L/usr/local/lib -lraylib -lm -lpthread -ldl -lrt -lX11
 
-game: main.c tictactoe.c minimax.c
-	clang -o game main.c tictactoe.c minimax.c
+SRC     = game.c tictactoe.c minimax.c
+TARGET  = game
+
+.PHONY: all run clean
+
+all: $(TARGET)
+
+$(TARGET): $(SRC)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+run: $(TARGET)
+	./$(TARGET)
+
+clean:
+	rm -f $(TARGET)
